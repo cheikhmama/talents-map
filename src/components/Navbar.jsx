@@ -1,15 +1,22 @@
 import { NavLink, useLocation } from "react-router-dom";
 import useTalentStore from "../hooks/useTalentStore";
+import { useProjectStore } from "../hooks/useProjectStore";
 import { useEffect, useState } from "react";
 
 export default function Navbar() {
   const { getMyProfile } = useTalentStore();
+  const { invitations } = useProjectStore();
   const [hasProfile, setHasProfile] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
     setHasProfile(!!getMyProfile());
   }, [getMyProfile, location]);
+
+  const myProfile = getMyProfile();
+  const pendingCount = myProfile
+    ? invitations.filter(inv => inv.talentId === myProfile.id && inv.status === 'pending').length
+    : 0;
 
   const navLinkClass = ({ isActive }) =>
     `px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${isActive
@@ -43,16 +50,20 @@ export default function Navbar() {
             Collaborer
           </NavLink>
 
+          <div className="w-px h-6 bg-zinc-200 mx-2"></div>
+          <NavLink to="/profile" className={navLinkClass}>
+            Mon Profil
+          </NavLink>
+
           {hasProfile && (
-            <>
-              <div className="w-px h-6 bg-zinc-200 mx-2"></div>
-              <NavLink to="/profile" className={navLinkClass}>
-                Mon Profil
-              </NavLink>
-              <NavLink to="/invitations" className={navLinkClass}>
-                Invitations
-              </NavLink>
-            </>
+            <NavLink to="/invitations" className={`${navLinkClass} relative flex items-center gap-2`}>
+              Invitations
+              {pendingCount > 0 && (
+                <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white ring-2 ring-white animate-pulse">
+                  {pendingCount}
+                </span>
+              )}
+            </NavLink>
           )}
         </div>
       </div>

@@ -41,10 +41,10 @@ export default function Home() {
 
             {!myProfile ? (
               <button
-                onClick={() => navigate("/profile")}
+                onClick={() => navigate("/projects/create")}
                 className="px-8 py-4 bg-white text-indigo-600 border border-indigo-200 rounded-full font-bold text-lg hover:bg-indigo-50 transition-all shadow-sm hover:shadow-md"
               >
-                Create My Profile
+                Start a Project
               </button>
             ) : (
               <button
